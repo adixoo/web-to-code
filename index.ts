@@ -73,10 +73,38 @@ async function main() {
     /* 
        BROWSER-SIDE CODE BEGINS HERE
        This code is serialized and sent to the browser.
-       References to 'document', 'window', etc., are valid only within this block.
     */
+
+    // 1. Enable editing
     document.body.contentEditable = "true";
 
+    // 2. STOP LAGGING - Neutralize background activities
+    console.log("Optimizing editor performance...");
+
+    // Stop all intervals
+    const maxIntervalId = window.setInterval(() => {}, 9999);
+    for (let i = 1; i < maxIntervalId; i++) window.clearInterval(i);
+
+    // Stop all timeouts (that haven't fired yet)
+    const maxTimeoutId = window.setTimeout(() => {}, 9999);
+    for (let i = 1; i < maxTimeoutId; i++) window.clearTimeout(i);
+
+    // Disable CSS animations and transitions
+    const style = document.createElement("style");
+    style.innerHTML = `
+      * {
+        transition: none !important;
+        animation: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Stop requestAnimationFrame loops
+    window.requestAnimationFrame = () => 0;
+
+    // Optional: Stop MutationObservers if we wanted to be extreme
+
+    // 3. Add notification
     const toast = document.createElement("div");
     toast.id = "editor-toast-notification";
     Object.assign(toast.style, {
@@ -90,8 +118,10 @@ async function main() {
       zIndex: "999999",
       fontFamily: "sans-serif",
       boxShadow: "0 2px 10px rgba(0,0,0,0.5)",
+      pointerEvents: "none",
     });
-    toast.innerText = "Editing Mode Active. Press ENTER in terminal to save.";
+    toast.innerText =
+      "Performance Mode Active. LAG REDUCED. Press ENTER in terminal to save.";
     document.body.appendChild(toast);
   });
 
