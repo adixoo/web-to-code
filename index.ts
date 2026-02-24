@@ -166,21 +166,29 @@ async function main() {
 
         const urlPath = parsedUrl.pathname;
 
-        // Calculate the base path of the target URL to make assets relative to it
-        const targetUrlDir = baseUrl.pathname.endsWith("/")
-          ? baseUrl.pathname
-          : path.dirname(baseUrl.pathname) + "/";
+        // Calculate the base directory of the target URL to make assets relative to it.
+        // If the path doesn't end in '/' and doesn't have an extension, we treat it as a directory.
+        let targetUrlDir = baseUrl.pathname;
+        if (!targetUrlDir.endsWith("/")) {
+          const extension = path.extname(targetUrlDir);
+          if (!extension) {
+            targetUrlDir += "/";
+          } else {
+            targetUrlDir = path.dirname(targetUrlDir);
+            if (!targetUrlDir.endsWith("/")) targetUrlDir += "/";
+          }
+        }
 
         let localPath: string;
         if (urlPath.startsWith(targetUrlDir)) {
           // Asset is inside or below the target directory, make it relative
           localPath = urlPath.slice(targetUrlDir.length);
         } else {
-          // Asset is outside the target directory (but on same domain),
-          // we use the full path but remove leading slash to keep it in outputDir
+          // Asset is elsewhere on the same domain - preserve its full path structure
           localPath = urlPath.startsWith("/") ? urlPath.substring(1) : urlPath;
         }
 
+        // If localPath is empty (e.g., fetching the page itself/root), give it a fallback
         if (!localPath || localPath === "" || localPath === "/") {
           localPath =
             "assets/resource_" + Math.random().toString(36).substring(7);
