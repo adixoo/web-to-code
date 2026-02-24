@@ -126,6 +126,14 @@ async function main() {
       try {
         const absoluteUrl = new URL(originalSrc, baseUrl.href).href;
         const parsedUrl = new URL(absoluteUrl);
+
+        // --- DOMAIN VALIDATION ---
+        // If the asset is from a different domain, we skip it as per requirements.
+        if (parsedUrl.hostname !== baseUrl.hostname) {
+          // console.log(`Skipping external resource: ${absoluteUrl}`);
+          continue;
+        }
+
         const urlPath = parsedUrl.pathname;
 
         // Create a local path that mirrors the structure
