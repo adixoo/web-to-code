@@ -1,0 +1,23 @@
+{
+  "name": "web-to-code",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "bun run index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/cheerio": "^1.0.0",
+    "@types/fs-extra": "^11.0.4",
+    "axios": "^1.13.5",
+    "cheerio": "^1.2.0",
+    "fs-extra": "^11.3.3",
+    "puppeteer": "^24.37.5"
+  }
+}
