@@ -166,10 +166,21 @@ async function main() {
 
         const urlPath = parsedUrl.pathname;
 
-        // Create a local path that mirrors the structure
-        let localPath = urlPath.startsWith("/")
-          ? urlPath.substring(1)
-          : urlPath;
+        // Calculate the base path of the target URL to make assets relative to it
+        const targetUrlDir = baseUrl.pathname.endsWith("/")
+          ? baseUrl.pathname
+          : path.dirname(baseUrl.pathname) + "/";
+
+        let localPath: string;
+        if (urlPath.startsWith(targetUrlDir)) {
+          // Asset is inside or below the target directory, make it relative
+          localPath = urlPath.slice(targetUrlDir.length);
+        } else {
+          // Asset is outside the target directory (but on same domain),
+          // we use the full path but remove leading slash to keep it in outputDir
+          localPath = urlPath.startsWith("/") ? urlPath.substring(1) : urlPath;
+        }
+
         if (!localPath || localPath === "" || localPath === "/") {
           localPath =
             "assets/resource_" + Math.random().toString(36).substring(7);
